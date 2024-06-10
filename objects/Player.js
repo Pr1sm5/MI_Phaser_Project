@@ -10,8 +10,8 @@ class Player extends Phaser.Physics.Arcade.Sprite {
         this.body.setMass(10);
         this.body.setDrag(1000,0);
 
-
-
+        //Hit registration player side
+        this.hitRegistered = false;
 
         this.anims.create({
             key:"run",
@@ -56,19 +56,36 @@ class Player extends Phaser.Physics.Arcade.Sprite {
         this.anims.create({
             key: "hit",
             frames: this.anims.generateFrameNumbers("warrior", {start: 37, end: 40}),
-            frameRate: 10
+            frameRate: 10,
+            repeat: 0
         })
     }
 
     update(cursors, enemy) {
 
-
         this.playerMovement(cursors);
-        if (enemy.hitPlayer=== true) {
+        this.playerKnockback(enemy);
+
+    }
+
+    playerKnockback(enemy){
+        if (this.playerHit(enemy) && this.hitRegistered) {
+            const knockbackDirection = (this.x > enemy.x) ? 1: -1;
+            this.setVelocity(knockbackDirection* 200, -200);
+        }
+    }
+
+    playerHit(enemy){
+        if (enemy.hitPlayer && !this.hitRegistered) {
+            this.hitRegistered = true;
             console.log("Player hit")
             enemy.hitPlayer = false;
             this.anims.play("hit", true);
+            this.on(Phaser.Animations.Events.ANIMATION_STOP, () => {this.hitRegistered=false;})
+            console.log(this.hitRegistered);
+            return true;
         }
+        return false;
     }
 
     playerMovement(cursors) {

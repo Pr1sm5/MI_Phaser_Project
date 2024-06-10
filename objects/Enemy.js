@@ -1,3 +1,5 @@
+import * as Actions from "../actions/AiActions.js";
+
 class Enemy extends Phaser.Physics.Arcade.Sprite {
     constructor (scene, x, y) {
         super (scene, x,y, "skeletonIdle");
@@ -93,20 +95,29 @@ class Enemy extends Phaser.Physics.Arcade.Sprite {
         }
     }
 
+    attackPlayer2(player) {
+
+    }
+
     //Creates a Sword hit box on attack, and marks hitPlayer = true;
     attackPlayer(player) {
 
         if (this.anims.currentAnim.key === "stab" && this.anims.currentFrame.index >= 4 && this.anims.currentFrame.index <= 6) {
-            this.swordHitbox.setPosition(this.body.center.x + (this.flipX ? -50: 18), this.body.center.y-12);
-            this.debugGraphics.lineStyle(1, 0xff0000);
-            this.debugGraphics.strokeRectShape(this.swordHitbox);
-            this.hitPlayer = Phaser.Geom.Intersects.RectangleToRectangle(this.swordHitbox, player.getBounds());
-        } else if(this.anims.currentAnim.key === "stab" && this.anims.currentFrame.index < 4 && this.anims.currentFrame.index > 6){
+            if (!this.hitPlayer) {
+                this.swordHitbox.setPosition(this.body.center.x + (this.flipX ? -50 : 18), this.body.center.y - 12);
+                this.debugGraphics.lineStyle(1, 0xff0000);
+                this.debugGraphics.strokeRectShape(this.swordHitbox);
+                this.hitPlayer = Phaser.Geom.Intersects.RectangleToRectangle(this.swordHitbox, player.getBounds());
+            }
+        } else if(this.anims.currentAnim.key === "stab" || !this.anims.isPlaying){
             this.hitPlayer = false;
         }
-        this.swordHitbox.setPosition(0,0);
+        // If the attack animation is not playing, set the hit box dimensions to zero
+        if (!this.anims.isPlaying || this.anims.currentAnim.key !== "stab") {
+            this.swordHitbox.setSize(0, 0);
+            this.hitPlayer = false;
+        }
     }
-
 }
 
 export default Enemy;

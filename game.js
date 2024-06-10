@@ -1,5 +1,6 @@
 import Player from "/objects/Player.js";
 import Enemy from "/objects/Enemy.js";
+import * as Actions from "/actions/AiActions.js";
 
 const config = {
     type: Phaser.AUTO,
@@ -52,6 +53,7 @@ function create()
 }
 
 function update(){
-    this.player.update(this.cursors, this.skeleton);
     this.skeleton.update(this.player);
+    this.player.update(this.cursors, this.skeleton);
+
 }
