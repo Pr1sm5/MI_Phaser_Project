@@ -88,7 +88,7 @@ class Enemy extends Phaser.Physics.Arcade.Sprite {
                 this.flipX = false;
                 this.anims.play("walk", true);
             }
-        } else if (distance <=33) {
+        } else if (distance <=40) {
             // this.debugGraphics.clear();
             this.body.setVelocityX(0);
             this.attackPlayer(player);
@@ -98,8 +98,6 @@ class Enemy extends Phaser.Physics.Arcade.Sprite {
     attackPlayer2(player) {
 
     }
-
-
 
     //Creates a Sword hit box on attack, and marks hitPlayer = true;
     attackPlayer(player) {

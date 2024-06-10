@@ -110,7 +110,7 @@ class Player extends Phaser.Physics.Arcade.Sprite {
         }
 
         if(cursorsUp && this.body.touching.down) {
-            this.setVelocityY(-150);
+            this.setVelocityY(-120);
             this.anims.play("jump",true);
         } else if (!this.body.touching.down) {
             if (this.body.velocity.y < 0) {
