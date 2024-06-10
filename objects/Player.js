@@ -69,9 +69,9 @@ class Player extends Phaser.Physics.Arcade.Sprite {
     }
 
     playerKnockback(enemy){
-        if (this.playerHit(enemy) && this.hitRegistered) {
+        if (this.playerHit(enemy)) {
             const knockbackDirection = (this.x > enemy.x) ? 1: -1;
-            this.setVelocity(knockbackDirection* 200, -200);
+            this.setVelocity(knockbackDirection* 50, -30);
         }
     }
 
@@ -97,20 +97,20 @@ class Player extends Phaser.Physics.Arcade.Sprite {
 
 
         if(cursorsLeft && this.body.touching.down) {
-            this.setVelocityX(-250);
+            this.setVelocityX(-170);
             this.flipX=true;
             this.setOffset(33,14);
             this.anims.play("run", true);
         }
         else if(cursorsRight && this.body.touching.down) {
-            this.setVelocityX(250);
+            this.setVelocityX(170);
             this.body.setOffset(16,14);
             this.flipX=false;
             this.anims.play("run", true);
         }
 
         if(cursorsUp && this.body.touching.down) {
-            this.setVelocityY(-120);
+            this.setVelocityY(-150);
             this.anims.play("jump",true);
         } else if (!this.body.touching.down) {
             if (this.body.velocity.y < 0) {
