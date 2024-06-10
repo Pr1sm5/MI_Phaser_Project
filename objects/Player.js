@@ -56,11 +56,11 @@ class Player extends Phaser.Physics.Arcade.Sprite {
 
     update(cursors, enemy) {
 
-        this.playerMovementLR(cursors);
+        this.playerMovement(cursors);
 
     }
 
-    playerMovementLR(cursors) {
+    playerMovement(cursors) {
         //Player Movement Shorts
         const cursorsLeft = cursors.left.isDown;
         const cursorsRight = cursors.right.isDown;
