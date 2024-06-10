@@ -4,7 +4,7 @@ class Enemy extends Phaser.Physics.Arcade.Sprite {
         scene.add.existing(this);
         scene.physics.add.existing(this);
 
-        this.hitPlayer;
+        this.hitPlayer = false;
 
         this.setCollideWorldBounds(true);
         this.body.setSize(28,42);
@@ -47,6 +47,8 @@ class Enemy extends Phaser.Physics.Arcade.Sprite {
         }
     }
 
+    //lets the skeleton walk from left to right
+    //needs detection for free placed platforms (no walls)
     idleWalking(){
         if (this.body.touching.right){
             this.body.setVelocityX(-80);
@@ -65,9 +67,12 @@ class Enemy extends Phaser.Physics.Arcade.Sprite {
             this.flipX = true;
             this.anims.play("walk", true);
         }
-
     }
 
+    //takes the distance (pythagoras c=sqrt(a^2+b^2))
+    //distance = sqrt((player.x - enemy.x)^2 + (player.y - enemy.y)^2)
+    //turns the skeleton when the player is left or right
+    //
     followPlayer(player){
         let distance = Math.sqrt(Math.pow((Math.abs( this.body.center.x - player.body.center.x)),2) + Math.pow(Math.abs(this.body.center.y - player.body.center.y), 2));
         if (distance < 200 && distance > 50 && this.anims.currentAnim.key !== "stab" || !this.anims.isPlaying ) {
@@ -96,6 +101,8 @@ class Enemy extends Phaser.Physics.Arcade.Sprite {
             this.debugGraphics.lineStyle(1, 0xff0000);
             this.debugGraphics.strokeRectShape(this.swordHitbox);
             this.hitPlayer = Phaser.Geom.Intersects.RectangleToRectangle(this.swordHitbox, player.getBounds());
+        } else if(this.anims.currentAnim.key === "stab" && this.anims.currentFrame.index < 4 && this.anims.currentFrame.index > 6){
+            this.hitPlayer = false;
         }
         this.swordHitbox.setPosition(0,0);
     }

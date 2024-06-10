@@ -52,12 +52,23 @@ class Player extends Phaser.Physics.Arcade.Sprite {
             frameRate: 10,
             repeat: 0
         })
+
+        this.anims.create({
+            key: "hit",
+            frames: this.anims.generateFrameNumbers("warrior", {start: 37, end: 40}),
+            frameRate: 10
+        })
     }
 
     update(cursors, enemy) {
 
-        this.playerMovement(cursors);
 
+        this.playerMovement(cursors);
+        if (enemy.hitPlayer=== true) {
+            console.log("Player hit")
+            enemy.hitPlayer = false;
+            this.anims.play("hit", true);
+        }
     }
 
     playerMovement(cursors) {
@@ -96,7 +107,7 @@ class Player extends Phaser.Physics.Arcade.Sprite {
             this.anims.play("attack");
         }
 
-        if (this.body.touching.down) {
+        if (this.body.touching.down && this.anims.currentAnim.key !== "hit") {
             if (!cursorsLeft && !cursorsRight) {
                 this.setDrag(1000, 0);
                 this.anims.play("idle", true);
