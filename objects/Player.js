@@ -96,23 +96,23 @@ class Player extends Phaser.Physics.Arcade.Sprite {
         const cursorsDown = cursors.down.isDown;
 
 
-        if(cursorsLeft && this.body.touching.down) {
+        if(cursorsLeft && this.body.blocked.down) {
             this.setVelocityX(-170);
             this.flipX=true;
             this.setOffset(33,14);
             this.anims.play("run", true);
         }
-        else if(cursorsRight && this.body.touching.down) {
+        else if(cursorsRight && this.body.blocked.down) {
             this.setVelocityX(170);
             this.body.setOffset(16,14);
             this.flipX=false;
             this.anims.play("run", true);
         }
 
-        if(cursorsUp && this.body.touching.down) {
+        if(cursorsUp && this.body.blocked.down) {
             this.setVelocityY(-120);
             this.anims.play("jump",true);
-        } else if (!this.body.touching.down) {
+        } else if (!this.body.blocked.down) {
             if (this.body.velocity.y < 0) {
                 this.anims.play("hover");
             } else if (this.body.velocity.y > 30) {
@@ -124,7 +124,7 @@ class Player extends Phaser.Physics.Arcade.Sprite {
             this.anims.play("attack");
         }
 
-        if (this.body.touching.down && this.anims.currentAnim.key !== "hit") {
+        if (this.body.blocked.down && this.anims.currentAnim.key !== "hit") {
             if (!cursorsLeft && !cursorsRight) {
                 this.setDrag(1000, 0);
                 this.anims.play("idle", true);

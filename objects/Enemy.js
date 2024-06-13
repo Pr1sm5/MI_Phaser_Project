@@ -107,8 +107,7 @@ class Enemy extends Phaser.Physics.Arcade.Sprite {
         this.body.setVelocityX(0);
         this.attackCooldown = true;
         this.anims.play("stab", true);
-
-
+        
         this.on(Phaser.Animations.Events.ANIMATION_UPDATE, () => {
             if (this.anims.currentAnim.key === "stab" && this.anims.currentFrame.index === 4) {
                 this.swordHitbox.setPosition(this.body.center.x + (this.flipX ? -56 : 18), this.body.center.y - 12);
