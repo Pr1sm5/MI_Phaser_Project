@@ -59,6 +59,13 @@ class Player extends Phaser.Physics.Arcade.Sprite {
             frameRate: 10,
             repeat: 0
         })
+        
+        this.anims.create({
+            key: "slide",
+            frames: this.anims.generateFrameNumbers("warrior", {start: 87, end: 90}),
+            frameRate: 10,
+            repeat: 0
+        })
     }
 
     update(cursors, enemy) {
@@ -71,7 +78,7 @@ class Player extends Phaser.Physics.Arcade.Sprite {
     playerKnockback(enemy){
         if (this.playerHit(enemy) && this.hitRegistered) {
             const knockbackDirection = (this.x > enemy.x) ? 1: -1;
-            this.setVelocity(knockbackDirection* 200, -200);
+            this.setVelocity(knockbackDirection* 75, 0);
         }
     }
 
@@ -112,12 +119,17 @@ class Player extends Phaser.Physics.Arcade.Sprite {
         if(cursorsUp && this.body.touching.down) {
             this.setVelocityY(-120);
             this.anims.play("jump",true);
+            if(cursorsUp && !this.body.touching.down) {
+                this.SetVelocityY(-600);
+                this.anims.play("jump", true);
+            }
         } else if (!this.body.touching.down) {
             if (this.body.velocity.y < 0) {
                 this.anims.play("hover");
             } else if (this.body.velocity.y > 30) {
                 this.anims.play("falling", true);
             }
+
         }
 
         if(cursors.space.isDown) {
@@ -133,6 +145,16 @@ class Player extends Phaser.Physics.Arcade.Sprite {
             }
         } else {
             this.setDrag(0, 0);
+        }
+
+        if (cursors.shift.isDown && this.body.touching.down && cursorsRight) {
+            this.anims.play("slide");
+            this.setVelocity(250, 0);
+        }
+
+        if (cursors.shift.isDown && this.body.touching.down && cursorsLeft) {
+            this.anims.play("slide");
+            this.setVelocity(-250, 0);
         }
     }
 }
