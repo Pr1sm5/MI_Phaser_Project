@@ -1,0 +1,55 @@
+{
+    "Map/SizeTest": {
+        "height": 4300,
+        "width": 2
+    },
+    "activeFile": "Level1.tmj",
+    "expandedProjectPaths": [
+        "."
+    ],
+    "fileStates": {
+        "C:/Users/PrismZ/OneDrive/ISMI/MI2/PhaserGamerProject/assets/Gandalf Tileset.tsx": {
+            "dynamicWrapping": true,
+            "scaleInDock": 1
+        },
+        "C:/Users/PrismZ/OneDrive/ISMI/MI2/PhaserGamerProject/assets/Gandalf_Tileset.tsx": {
+            "dynamicWrapping": false,
+            "scaleInDock": 1,
+            "scaleInEditor": 1
+        },
+        "Level1.tmj": {
+            "scale": 2,
+            "selectedLayer": 3,
+            "viewCenter": {
+                "x": 518.75,
+                "y": 273
+            }
+        },
+        "Level1.tmj#Gandalf Tileset": {
+            "scaleInDock": 1
+        },
+        "Level1.tmx": {
+            "scale": 1.5,
+            "selectedLayer": 0,
+            "viewCenter": {
+                "x": 292.99999999999994,
+                "y": 390.6666666666667
+            }
+        }
+    },
+    "last.externalTilesetPath": "C:/Users/PrismZ/OneDrive/ISMI/MI2/PhaserGamerProject/assets",
+    "map.height": 35,
+    "map.lastUsedFormat": "json",
+    "map.width": 70,
+    "openFiles": [
+        "Level1.tmj"
+    ],
+    "project": "Level1.tiled-project",
+    "recentFiles": [
+        "Level1.tmj",
+        "Level1.tmx",
+        "C:/Users/PrismZ/OneDrive/ISMI/MI2/PhaserGamerProject/assets/Gandalf_Tileset.tsx"
+    ],
+    "tileset.lastUsedFilter": "Tiled-Kachelsatzdateien (*.tsx *.xml)",
+    "tileset.lastUsedFormat": "tsx"
+}

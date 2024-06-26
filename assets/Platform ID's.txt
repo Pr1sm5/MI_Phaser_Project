@@ -1,0 +1,5 @@
+Small single platform ID = 44
+In house Platforms ID's = 150 - 152 
+Ladder indors ID = 40
+Ladder Outdoor ID = 43
+Skeleton Collision ID = 32

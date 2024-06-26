@@ -1,6 +1,6 @@
 import * as Actions from "../actions/AiActions.js";
 
-class Enemy extends Phaser.Physics.Arcade.Sprite {
+class Skeleton extends Phaser.Physics.Arcade.Sprite {
     constructor (scene, x, y) {
         super (scene, x,y, "skeletonIdle");
         scene.add.existing(this);
@@ -8,9 +8,10 @@ class Enemy extends Phaser.Physics.Arcade.Sprite {
 
         this.hitPlayer = false;
         this.attackCooldown = false;
+        this.collidesTurnAround = false;
+        this.turnCoolDown = false;
 
-        this.setCollideWorldBounds(true);
-        this.body.setSize(28,42);
+        this.body.setSize(20,42);
         this.body.setOffset(36, 21);
         this.swordHitbox = new Phaser.Geom.Rectangle(0,0,40, 10);
         this.debugGraphics = scene.add.graphics();
@@ -53,21 +54,25 @@ class Enemy extends Phaser.Physics.Arcade.Sprite {
     //lets the skeleton walk from left to right
     //needs detection for free placed platforms (no walls)
     idleWalking(){
-        if (this.body.touching.right){
+        if (this.body.blocked.right){
             this.body.setVelocityX(-80);
+            this.body.setOffset(42,21);
             this.flipX = false;
             this.anims.play("walk", true);
-        } else if (this.body.touching.left) {
+        } else if (this.body.blocked.left) {
             this.body.setVelocityX(80);
+            this.body.setOffset(36,21);
             this.flipX = true;
             this.anims.play("walk", true);
         } else if (this.body.velocity.x > 0) {
             this.body.setVelocityX(80);
+            this.body.setOffset(36,21);
             this.flipX = false;
             this.anims.play("walk", true);
         } else {
             this.body.setVelocityX(-80);
             this.flipX = true;
+            this.body.setOffset(42,21);
             this.anims.play("walk", true);
         }
     }
@@ -81,14 +86,16 @@ class Enemy extends Phaser.Physics.Arcade.Sprite {
         if (distance < 200 &&  distance >= 50 && this.anims.currentAnim.key !== "stab" || !this.anims.isPlaying ) {
             if (player.body.center.x < this.body.center.x) {
                 this.body.setVelocityX(-100);
+                this.body.setOffset(42,21);
                 this.flipX = true;
                 this.anims.play("walk", true);
             } else if (player.body.center.x > this.body.center.x) {
                 this.body.setVelocityX(100);
+                this.body.setOffset(36,21);
                 this.flipX = false;
                 this.anims.play("walk", true);
             }
-        } else if (distance <=40) {
+        } else if (distance <=55) {
             // this.debugGraphics.clear();
             this.body.setVelocityX(0);
             this.attackPlayer(player);
@@ -98,6 +105,8 @@ class Enemy extends Phaser.Physics.Arcade.Sprite {
     attackPlayer2(player) {
 
     }
+
+
 
     //Creates a Sword hit box on attack, and marks hitPlayer = true;
     attackPlayer(player) {
@@ -126,8 +135,8 @@ class Enemy extends Phaser.Physics.Arcade.Sprite {
             this.debugGraphics.clear();
             console.log(this.attackCooldown);
             console.log(this.hitPlayer);
-        }, 2500);
+        }, 1250);
     }
 }
 
-export default Enemy;
+export default Skeleton;
