@@ -8,7 +8,7 @@ class Player extends Phaser.Physics.Arcade.Sprite {
         this.body.setSize(20,30);
         this.body.setOffset(16,14);
         this.body.setMass(10);
-        this.body.setDrag(1000,0);
+        this.body.setDrag(0,0);
 
         //Hit registration player side
         this.hitRegistered = false;
@@ -48,7 +48,14 @@ class Player extends Phaser.Physics.Arcade.Sprite {
 
         this.anims.create({
             key: "attack",
-            frames: this.anims.generateFrameNumbers("warrior", {start:14, end: 26}),
+            frames: this.anims.generateFrameNumbers("warrior", {start:14, end: 22}),
+            frameRate: 15,
+            repeat: 0
+        })
+
+        this.anims.create({
+            key: "attackHeavy",
+            frames: this.anims.generateFrameNumbers("warrior", {start: 77, end: 83}),
             frameRate: 10,
             repeat: 0
         })
@@ -59,10 +66,17 @@ class Player extends Phaser.Physics.Arcade.Sprite {
             frameRate: 10,
             repeat: 0
         })
-        
+
         this.anims.create({
             key: "slide",
-            frames: this.anims.generateFrameNumbers("warrior", {start: 87, end: 90}),
+            frames: this.anims.generateFrameNumbers("warrior", {start: 84, end: 90}),
+            frameRate: 10,
+            repeat: 0
+        })
+
+        this.anims.create({
+            key: "wallSlide",
+            frames: this.anims.generateFrameNumbers("warrior", {start: 60, end: 63}),
             frameRate: 10,
             repeat: 0
         })
@@ -76,9 +90,9 @@ class Player extends Phaser.Physics.Arcade.Sprite {
     }
 
     playerKnockback(enemy){
-        if (this.playerHit(enemy) && this.hitRegistered) {
+        if (this.playerHit(enemy)) {
             const knockbackDirection = (this.x > enemy.x) ? 1: -1;
-            this.setVelocity(knockbackDirection* 75, 0);
+            this.setVelocity(knockbackDirection* 50, -30);
         }
     }
 
@@ -101,60 +115,134 @@ class Player extends Phaser.Physics.Arcade.Sprite {
         const cursorsRight = cursors.right.isDown;
         const cursorsUp = cursors.up.isDown;
         const cursorsDown = cursors.down.isDown;
+        const cursorsSpace = cursors.space.isDown;
+        const cursorsShift = cursors.shift.isDown;
 
+        // Check if attacking
+        const isAttacking = this.anims.currentAnim && (this.anims.currentAnim.key === "attack" || this.anims.currentAnim.key === "attackHeavy");
 
-        if(cursorsLeft && this.body.touching.down) {
-            this.setVelocityX(-250);
-            this.flipX=true;
-            this.setOffset(33,14);
-            this.anims.play("run", true);
-        }
-        else if(cursorsRight && this.body.touching.down) {
-            this.setVelocityX(250);
-            this.body.setOffset(16,14);
-            this.flipX=false;
-            this.anims.play("run", true);
+        // If attacking, set velocity to 0 and skip movement logic
+        if (isAttacking) {
+            this.setVelocityX(0);
+            this.setDrag(0, 0);
+            return;
         }
 
-        if(cursorsUp && this.body.touching.down) {
-            this.setVelocityY(-120);
-            this.anims.play("jump",true);
-            if(cursorsUp && !this.body.touching.down) {
-                this.SetVelocityY(-600);
-                this.anims.play("jump", true);
+        //Horizontal movement
+        if (cursorsDown && this.body.blocked.down) {
+            // Initiate slide
+            this.anims.play("slide", true);
+            if (this.flipX) {
+                this.setVelocityX(-225);
+            } else {
+                this.setVelocityX(225);
             }
-        } else if (!this.body.touching.down) {
+        } else if (cursorsLeft && this.body.blocked.down) {
+            this.setVelocityX(-170);
+            this.flipX = true;
+            this.setOffset(33, 14);
+            this.anims.play("run", true);
+        } else if (cursorsRight && this.body.blocked.down) {
+            this.setVelocityX(170);
+            this.body.setOffset(16, 14);
+            this.flipX = false;
+            this.anims.play("run", true);
+        } else if (this.anims.currentAnim && this.anims.currentAnim.key === "slide") {
+            // Maintain slide velocity
+            if (this.flipX) {
+                this.setVelocityX(-225);
+            } else {
+                this.setVelocityX(225);
+            }
+        } else {
+            this.setVelocityX(0);
+        }
+
+        if (cursorsDown && this.body.blocked.down) {
+            // Initiate slide
+            this.anims.play("slide", true);
+            if (this.flipX) {
+                this.setVelocityX(-225);
+            } else {
+                this.setVelocityX(225);
+            }
+        } else if (cursorsLeft && this.body.blocked.down) {
+            this.setVelocityX(-170);
+            this.flipX = true;
+            this.setOffset(33, 14);
+            this.anims.play("run", true);
+        } else if (cursorsRight && this.body.blocked.down) {
+            this.setVelocityX(170);
+            this.body.setOffset(16, 14);
+            this.flipX = false;
+            this.anims.play("run", true);
+        } else if (this.anims.currentAnim && this.anims.currentAnim.key === "slide") {
+            // Maintain slide velocity
+            if (this.flipX) {
+                this.setVelocityX(-225);
+            } else {
+                this.setVelocityX(225);
+            }
+        } else {
+            this.setVelocityX(0);
+        }
+
+        //Vertical movement
+        if(cursorsUp && this.body.blocked.down) {
+            this.setVelocityY(-200);
+            this.anims.play("jump",true);
+        } else if (!this.body.blocked.down) {
+            if (cursorsLeft) {
+                this.setVelocityX(-170);
+                this.flipX = true;
+                this.setOffset(33, 14);
+            } else if (cursorsRight) {
+                this.setVelocityX(170);
+                this.body.setOffset(16, 14);
+                this.flipX = false;
+            }
             if (this.body.velocity.y < 0) {
                 this.anims.play("hover");
             } else if (this.body.velocity.y > 30) {
                 this.anims.play("falling", true);
             }
-
         }
 
-        if(cursors.space.isDown) {
-            this.anims.play("attack");
+
+        if(cursorsSpace && this.body.blocked.down) {
+            this.anims.play("attack", true);
         }
 
-        if (this.body.touching.down && this.anims.currentAnim.key !== "hit") {
+        // if(cursorsSpace && !this.body.blocked.down) {
+        //     this.anims.play("attack", true);
+        //     this.setVelocityX(-100);
+        // }
+
+        if (cursorsShift && this.body.blocked.down) {
+             this.anims.play("attackHeavy", true);
+        }
+
+        if (cursorsShift && !this.body.blocked.down) {
+            this.anims.play("attackHeavy", true);
+            this.setVelocityY(100);
+        }
+
+        if (this.body.onWall()) {
+            this.anims.play("wallSlide", true);
+            this.setVelocityY(100);
+        }
+
+
+        if (this.body.blocked.down && this.anims.currentAnim.key !== "hit") {
             if (!cursorsLeft && !cursorsRight) {
-                this.setDrag(1000, 0);
-                this.anims.play("idle", true);
+                if(this.anims.currentAnim.key === "run") this.anims.play("idle", true);
+                this.on(Phaser.Animations.Events.ANIMATION_COMPLETE, () => {this.anims.play("idle", true);})
+                this.setDrag(500, 0);
             } else {
                 this.setDrag(0, 0);
             }
         } else {
             this.setDrag(0, 0);
-        }
-
-        if (cursors.shift.isDown && this.body.touching.down && cursorsRight) {
-            this.anims.play("slide");
-            this.setVelocity(250, 0);
-        }
-
-        if (cursors.shift.isDown && this.body.touching.down && cursorsLeft) {
-            this.anims.play("slide");
-            this.setVelocity(-250, 0);
         }
     }
 }

@@ -7,11 +7,14 @@ class Enemy extends Phaser.Physics.Arcade.Sprite {
         scene.physics.add.existing(this);
 
         this.hitPlayer = false;
+        this.attackCooldown = false;
+        this.collidesTurnAround = false;
+        this.turnCoolDown = false;
 
         this.setCollideWorldBounds(true);
         this.body.setSize(28,42);
         this.body.setOffset(36, 21);
-        this.swordHitbox = new Phaser.Geom.Rectangle(0,0,35, 10);
+        this.swordHitbox = new Phaser.Geom.Rectangle(0,0,40, 10);
         this.debugGraphics = scene.add.graphics();
 
         this.anims.create({
@@ -43,8 +46,9 @@ class Enemy extends Phaser.Physics.Arcade.Sprite {
     }
     update(player){
         let distance = Math.sqrt(Math.pow((Math.abs( this.body.center.x - player.body.center.x)),2) + Math.pow(Math.abs(this.body.center.y - player.body.center.y), 2));
-        this.followPlayer(player);
-        if (distance > 200) {
+       this.followPlayer(player);
+
+        if (distance > 1) {
             this.idleWalking();
         }
     }
@@ -77,7 +81,7 @@ class Enemy extends Phaser.Physics.Arcade.Sprite {
     //
     followPlayer(player){
         let distance = Math.sqrt(Math.pow((Math.abs( this.body.center.x - player.body.center.x)),2) + Math.pow(Math.abs(this.body.center.y - player.body.center.y), 2));
-        if (distance < 200 && distance > 50 && this.anims.currentAnim.key !== "stab" || !this.anims.isPlaying ) {
+        if (distance < 200 &&  distance >= 50 && this.anims.currentAnim.key !== "stab" || !this.anims.isPlaying ) {
             if (player.body.center.x < this.body.center.x) {
                 this.body.setVelocityX(-100);
                 this.flipX = true;
@@ -87,10 +91,9 @@ class Enemy extends Phaser.Physics.Arcade.Sprite {
                 this.flipX = false;
                 this.anims.play("walk", true);
             }
-        } else if (distance <= 50) {
-            this.debugGraphics.clear();
+        } else if (distance <=40) {
+            // this.debugGraphics.clear();
             this.body.setVelocityX(0);
-            this.anims.play("stab", true);
             this.attackPlayer(player);
         }
     }
@@ -99,24 +102,35 @@ class Enemy extends Phaser.Physics.Arcade.Sprite {
 
     }
 
+
     //Creates a Sword hit box on attack, and marks hitPlayer = true;
     attackPlayer(player) {
-
-        if (this.anims.currentAnim.key === "stab" && this.anims.currentFrame.index >= 4 && this.anims.currentFrame.index <= 6) {
-            if (!this.hitPlayer) {
-                this.swordHitbox.setPosition(this.body.center.x + (this.flipX ? -50 : 18), this.body.center.y - 12);
+        if (this.attackCooldown) {
+            return;
+        }
+        this.body.setVelocityX(0);
+        this.attackCooldown = true;
+        this.anims.play("stab", true);
+        
+        this.on(Phaser.Animations.Events.ANIMATION_UPDATE, () => {
+            if (this.anims.currentAnim.key === "stab" && this.anims.currentFrame.index === 4) {
+                this.swordHitbox.setPosition(this.body.center.x + (this.flipX ? -56 : 18), this.body.center.y - 12);
                 this.debugGraphics.lineStyle(1, 0xff0000);
                 this.debugGraphics.strokeRectShape(this.swordHitbox);
-                this.hitPlayer = Phaser.Geom.Intersects.RectangleToRectangle(this.swordHitbox, player.getBounds());
+                if (!this.hitPlayer) {
+                    this.hitPlayer = Phaser.Geom.Intersects.RectangleToRectangle(this.swordHitbox, player.body.getBounds(player.body.center));
+                }
             }
-        } else if(this.anims.currentAnim.key === "stab" || !this.anims.isPlaying){
-            this.hitPlayer = false;
-        }
+        })
+        this.on(Phaser.Animations.Events.ANIMATION_COMPLETE, () => {this.hitPlayer=false;})
         // If the attack animation is not playing, set the hit box dimensions to zero
-        if (!this.anims.isPlaying || this.anims.currentAnim.key !== "stab") {
-            this.swordHitbox.setSize(0, 0);
-            this.hitPlayer = false;
-        }
+
+        setTimeout(() => {
+            this.attackCooldown = false;
+            this.debugGraphics.clear();
+            console.log(this.attackCooldown);
+            console.log(this.hitPlayer);
+        }, 2500);
     }
 }
 
