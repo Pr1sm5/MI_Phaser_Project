@@ -18,11 +18,11 @@
             "scaleInEditor": 1
         },
         "Level1.tmj": {
-            "scale": 2,
-            "selectedLayer": 3,
+            "scale": 1.5,
+            "selectedLayer": 1,
             "viewCenter": {
-                "x": 518.75,
-                "y": 273
+                "x": 1120,
+                "y": 559.6666666666666
             }
         },
         "Level1.tmj#Gandalf Tileset": {
@@ -32,8 +32,8 @@
             "scale": 1.5,
             "selectedLayer": 0,
             "viewCenter": {
-                "x": 292.99999999999994,
-                "y": 390.6666666666667
+                "x": 1120,
+                "y": 559.6666666666666
             }
         }
     },
@@ -42,13 +42,15 @@
     "map.lastUsedFormat": "json",
     "map.width": 70,
     "openFiles": [
-        "Level1.tmj"
-    ],
-    "project": "Level1.tiled-project",
-    "recentFiles": [
         "Level1.tmj",
         "Level1.tmx",
         "C:/Users/PrismZ/OneDrive/ISMI/MI2/PhaserGamerProject/assets/Gandalf_Tileset.tsx"
+    ],
+    "project": "Level1.tiled-project",
+    "recentFiles": [
+        "C:/Users/PrismZ/OneDrive/ISMI/MI2/PhaserGamerProject/assets/Gandalf_Tileset.tsx",
+        "Level1.tmx",
+        "Level1.tmj"
     ],
     "tileset.lastUsedFilter": "Tiled-Kachelsatzdateien (*.tsx *.xml)",
     "tileset.lastUsedFormat": "tsx"
