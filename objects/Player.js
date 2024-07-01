@@ -21,6 +21,15 @@ class Player extends Phaser.Physics.Arcade.Sprite {
         this.body.setMass(10);
         this.body.setDrag(1000,0);
 
+        //----------------------------------Sounds---------------------------------
+        this.hitSound = scene.sound.add("womanHurt", {loop:false});
+        this.womanGrunt1 = scene.sound.add("womanGrunt1", {loop:false});
+        this.womanGrunt2 = scene.sound.add("womanGrunt2", {loop:false});
+        this.womanGrunt3 = scene.sound.add("womanGrunt3", {loop:false});
+        this.womanGrunt4 = scene.sound.add("womanGrunt4", {loop:false});
+        this.runningGras = scene.sound.add("runningGras", {loop: true, volume: 1});
+
+
         //Hit registration player side
         this.hitRegistered = false;
 
@@ -28,7 +37,7 @@ class Player extends Phaser.Physics.Arcade.Sprite {
         this.anims.create({
             key:"run",
             frames: this.anims.generateFrameNumbers("warrior", {start: 6, end: 13}),
-            frameRate: 10,
+            frameRate: 12,
             repeat: 0
         });
 
@@ -131,6 +140,7 @@ class Player extends Phaser.Physics.Arcade.Sprite {
     playerKnockback(enemy){
         if (this.playerHit(enemy)) {
             const knockbackDirection = (this.x > enemy.x) ? 1: -1;
+            this.hitSound.play();
             this.setVelocity(knockbackDirection* 50, -30);
         }
     }
@@ -158,7 +168,15 @@ class Player extends Phaser.Physics.Arcade.Sprite {
     playerDeath(){
         if (this.health <= 0) {
             this.body.setVelocity(0,0);
+            this.womanGrunt3.play();
             this.anims.play("death", true);
+        }
+    }
+
+    soundHandling(){
+        if (this.anims.currentAnim) {
+            if (this.anims.currentAnim.key === "attack") this.womanGrunt1.play();
+            if (this.anims.currentAnim.key === "attackHeavy") this.womanGrunt2.play();
         }
     }
 
@@ -171,6 +189,16 @@ class Player extends Phaser.Physics.Arcade.Sprite {
         const cursorsDown = cursors.down.isDown;
         const cursorsSpace = cursors.space.isDown;
         const cursorsShift = cursors.shift.isDown;
+
+        if(this.body.velocity.x !== 0 && this.body.blocked.down) {
+            if(!this.runningGras.isPlaying) {
+                this.runningGras.play();
+            }
+        } else {
+            if(this.runningGras.isPlaying) {
+                this.runningGras.pause();
+            }
+        }
 
         // Check if attacking
         this.isAttacking = this.anims.currentAnim && (this.anims.currentAnim.key === "attack" || this.anims.currentAnim.key === "attackHeavy");
@@ -222,6 +250,7 @@ class Player extends Phaser.Physics.Arcade.Sprite {
         if(cursorsUp) {
             if (!this.upFlag &&(this.body.blocked.down || this.jumpCount <= 1)) {
                 this.setVelocityY(-200);
+                this.womanGrunt4.play();
                 this.jumpCount++;
                 console.log(this.jumpCount);
                 this.anims.play("jump", true);
@@ -251,6 +280,7 @@ class Player extends Phaser.Physics.Arcade.Sprite {
 
         if(cursorsSpace && this.body.blocked.down && !this.attackCooldown) {
             this.anims.play("attack", true);
+            this.womanGrunt1.play();
             this.attackCooldown = true;
             this.scene.time.delayedCall(600, () => {
                 this.attackCooldown = false;
@@ -265,6 +295,7 @@ class Player extends Phaser.Physics.Arcade.Sprite {
         if (cursorsShift && this.body.blocked.down && !this.attackCooldown) {
             this.anims.play("attackHeavy", true);
             this.attackCooldown = true;
+            this.womanGrunt2.play();
             this.scene.time.delayedCall(1200, () => {
                 this.attackCooldown = false;
             });
@@ -273,6 +304,7 @@ class Player extends Phaser.Physics.Arcade.Sprite {
         if (cursorsShift && !this.body.blocked.down) {
             this.anims.play("attackHeavy", true);
             this.attackCooldown = true;
+            this.womanGrunt2.play();
             this.setVelocityY(100);
             this.scene.time.delayedCall(1200, () => {
                 this.attackCooldown = false;

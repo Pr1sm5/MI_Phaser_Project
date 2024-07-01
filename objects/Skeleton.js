@@ -17,6 +17,11 @@ class Skeleton extends Phaser.Physics.Arcade.Sprite {
         this.turnCoolDown = false;
         this.setDrag(1000,0);
 
+        //----------------------------------Sounds---------------------------------
+        this.hitSound = scene.sound.add("skeletonHit" , {loop: false});
+        this.deathSound = scene.sound.add("boneBreak9", {loop: false, volume:0.7});
+        this.deathSound.setDetune(2)
+
         this.body.setSize(20,42);
         this.body.setOffset(36, 21);
         this.swordHitbox = new Phaser.Geom.Rectangle(0,0,40, 10);
@@ -107,7 +112,7 @@ class Skeleton extends Phaser.Physics.Arcade.Sprite {
     //
     followPlayer(player){
         let distance = Math.sqrt(Math.pow((Math.abs( this.body.center.x - this.player.body.center.x)),2) + Math.pow(Math.abs(this.body.center.y - this.player.body.center.y), 2));
-        if (distance < 200 &&  distance >= 50 && (this.anims.currentAnim.key !== "stab" || !this.anims.isPlaying) ) {
+        if (distance < 200 &&  distance >= 35 && (this.anims.currentAnim.key !== "stab" || !this.anims.isPlaying) ) {
             if (this.player.body.center.x < this.body.center.x && !this.hitRegistered) {
                 this.body.setVelocityX(-100);
                 this.body.setOffset(42,21);
@@ -120,7 +125,13 @@ class Skeleton extends Phaser.Physics.Arcade.Sprite {
                 this.anims.play("walk", true);
             }
         } else if (distance <=55) {
+
             this.body.setVelocityX(0);
+            /*if(player.x < this.x && this.anims.currentAnim.key !== "stab") {
+                this.flipX = true
+            } else if (this.anims.currentAnim.key !== "stab") {
+                this.flipX = false;
+            }*/
             this.attackPlayer(this.player);
         }
     }
@@ -155,12 +166,14 @@ class Skeleton extends Phaser.Physics.Arcade.Sprite {
         if (!this.hitRegistered && this.health >= 1){
             this.hitRegistered = true;
             this.anims.play("hit", true);
+            this.hitSound.play();
             this.health -= amount;
             if(this.health <= 0) {
                 this.gameScene.enemyKilled(150);
                 this.body.setVelocity(0,0);
                 this.isDead = true;
                 this.anims.play("die", true);
+                this.deathSound.play();
                 return;
             }
             this.knockBack(amount);

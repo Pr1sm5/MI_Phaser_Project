@@ -12,9 +12,8 @@ export default class GameScene extends Phaser.Scene {
     create() {
         this.debugGraphics = this.add.graphics();
         this.cursors = this.input.keyboard.createCursorKeys();
-        this.platforms = this.physics.add.staticGroup();
-        this.walls = this.physics.add.staticGroup();
         this.cameras.main.setBounds(0, 0, 2500, 1500);
+        this.sound.add("backgroundMusic", {loop: true, volume: 0.1}).play();
 
         const map = this.make.tilemap({ key: "tilemap" });
         const tileset = map.addTilesetImage("Gandalf Tileset", "gandalf");
@@ -24,12 +23,12 @@ export default class GameScene extends Phaser.Scene {
         const skeletonObject = map.getObjectLayer("Skeletons");
         const coinLayer = map.getObjectLayer("Coins");
 
-        this.scoreText = this.add.text(600, 10, "Score: " + score, {font: "32px Algerian"});
+        this.scoreText = this.add.text(1280-250, 10, "Score: " + score, {font: "32px Algerian"}).setDepth(1);
         this.scoreText.setScrollFactor(0,0);
 
         let coins = this.physics.add.group({ allowGravity: false });
         coinLayer.objects.forEach(object => {
-            let coin = new Coins(this, object.x, object.y, "goldCoin");
+            let coin = new Coins(this, object.x, object.y, "goldCoin", "coinCollect");
             coin.body.setAllowGravity(false);
             coins.add(coin);
         });
@@ -42,8 +41,9 @@ export default class GameScene extends Phaser.Scene {
         skeletonCollisionLayer.setCollision(32, true);
         this.setCustomCollision(platformLayer);
 
-        this.player = new Player(this, 600, 300).setScale(1.5);
+        this.player = new Player(this, 600, 300).setScale(1.5).setDepth(1);
 
+        //------------------------Enemy/Skeleton------------------------------
         this.enemies = this.physics.add.group({
             classType: Skeleton,
             runChildUpdate: true
@@ -53,6 +53,7 @@ export default class GameScene extends Phaser.Scene {
             this.enemies.add(new Skeleton(this, skelObj.x, skelObj.y, this.player));
         });
 
+        //---------------------Collider/Overlap---------------------
         this.physics.add.collider(this.player, groundLayer);
         this.physics.add.collider(this.player, platformLayer);
         this.physics.add.collider(this.enemies, groundLayer);
@@ -80,6 +81,7 @@ export default class GameScene extends Phaser.Scene {
 
     collectCoin(player, coin) {
         score += coin.coinValue;
+        coin.playCollect();
         coin.destroy();
         this.scoreText.setText("Score: " + score);
         console.log("Coin collected! Score: " + score);

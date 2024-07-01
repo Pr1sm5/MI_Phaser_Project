@@ -17,6 +17,18 @@ export default class Preload extends Phaser.Scene {
         this.load.spritesheet("skeletonDie", "assets/skeleton_die.png", { frameWidth: 96, frameHeight: 64 });
         this.load.spritesheet("goldCoin", "assets/MonedaD.png", { frameWidth: 16, frameHeight: 16 });
 
+        this.load.audio("coinCollect", "assets/coinCollect.mp3");
+        this.load.audio("boneBreak9", "assets/boneBreak9.mp3");
+        this.load.audio("boneBreak3", "assets/boneBreak3.mp3");
+        this.load.audio("skeletonHit", "assets/skeletonHit.mp3");
+        this.load.audio("womanHurt", "assets/womanHurt.mp3");
+        this.load.audio("womanGrunt1", "assets/femaleGrunt1.mp3");
+        this.load.audio("womanGrunt2", "assets/femaleGrunt2.mp3");
+        this.load.audio("womanGrunt3", "assets/femaleGrunt3.mp3");
+        this.load.audio("womanGrunt4", "assets/femaleGrunt4.mp3");
+        this.load.audio("runningGras", "assets/runningGras.mp3");
+        this.load.audio("backgroundMusic", "assets/backgroundMusic.mp3");
+
         this.load.on("complete", () => {
             console.log("All assets loaded");
             this.scene.start('GameScene');
