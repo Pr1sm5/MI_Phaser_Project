@@ -28,6 +28,7 @@ export default class Preload extends Phaser.Scene {
         this.load.audio("womanGrunt4", "assets/femaleGrunt4.mp3");
         this.load.audio("runningGras", "assets/runningGras.mp3");
         this.load.audio("backgroundMusic", "assets/backgroundMusic.mp3");
+        this.load.audio("sliding", "assets/sliding.mp3");
 
         this.load.on("complete", () => {
             console.log("All assets loaded");

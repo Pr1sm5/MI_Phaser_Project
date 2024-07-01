@@ -13,7 +13,7 @@ export default class GameScene extends Phaser.Scene {
         this.debugGraphics = this.add.graphics();
         this.cursors = this.input.keyboard.createCursorKeys();
         this.cameras.main.setBounds(0, 0, 2500, 1500);
-        this.sound.add("backgroundMusic", {loop: true, volume: 0.1}).play();
+        this.sound.add("backgroundMusic", {loop: true, volume: 0.05}).play();
 
         const map = this.make.tilemap({ key: "tilemap" });
         const tileset = map.addTilesetImage("Gandalf Tileset", "gandalf");

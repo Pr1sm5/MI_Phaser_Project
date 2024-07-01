@@ -28,6 +28,7 @@ class Player extends Phaser.Physics.Arcade.Sprite {
         this.womanGrunt3 = scene.sound.add("womanGrunt3", {loop:false});
         this.womanGrunt4 = scene.sound.add("womanGrunt4", {loop:false});
         this.runningGras = scene.sound.add("runningGras", {loop: true, volume: 1});
+        this.sliding = scene.sound.add("sliding", {loop: true});
 
 
         //Hit registration player side
@@ -169,6 +170,7 @@ class Player extends Phaser.Physics.Arcade.Sprite {
         if (this.health <= 0) {
             this.body.setVelocity(0,0);
             this.womanGrunt3.play();
+            this.runningGras.pause();
             this.anims.play("death", true);
         }
     }
@@ -190,13 +192,29 @@ class Player extends Phaser.Physics.Arcade.Sprite {
         const cursorsSpace = cursors.space.isDown;
         const cursorsShift = cursors.shift.isDown;
 
+        //Movement Sound
         if(this.body.velocity.x !== 0 && this.body.blocked.down) {
-            if(!this.runningGras.isPlaying) {
+            if(!this.runningGras.isPlaying && this.anims.currentAnim && this.anims.currentAnim.key !== "slide") {
                 this.runningGras.play();
             }
         } else {
             if(this.runningGras.isPlaying) {
                 this.runningGras.pause();
+            }
+        }
+
+        if(this.body.onWall() && this.body.velocity.y > 0) {
+            if(!this.sliding.isPlaying) {
+                this.sliding.play();
+            }
+        } else  if (this.anims.currentAnim && this.anims.currentAnim.key === "slide") {
+            if(!this.sliding.isPlaying) {
+                this.runningGras.pause();
+                this.sliding.play();
+            }
+        } else {
+            if(this.sliding.isPlaying) {
+                this.sliding.pause();
             }
         }
 
