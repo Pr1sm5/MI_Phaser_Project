@@ -1,2 +1,2 @@
 # MI_Phaser_Project
-AHHHH
+Studenten Projekt der Hochschule Bremen
